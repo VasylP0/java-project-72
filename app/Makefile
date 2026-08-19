@@ -1,0 +1,2 @@
+setup:
+	./gradlew installDist
