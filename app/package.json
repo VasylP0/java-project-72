@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "@tailwindcss/forms": "^0.5.10",
+    "tailwindcss": "^4.1.0"
+  },
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i ./src/main/resources/input.css -o ./src/main/resources/static/app.css"
+  }
+}

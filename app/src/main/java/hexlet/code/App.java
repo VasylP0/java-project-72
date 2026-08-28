@@ -2,7 +2,9 @@ package hexlet.code;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
+import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.repository.BaseRepository;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
@@ -25,8 +27,14 @@ public class App {
     }
 
     private static TemplateEngine createTemplateEngine() {
-        return JavalinJte.Companion.directoryTemplateEngine(
-                "src/main/resources/templates"
+        ClassLoader classLoader = App.class.getClassLoader();
+
+        ResourceCodeResolver codeResolver =
+                new ResourceCodeResolver("templates", classLoader);
+
+        return TemplateEngine.create(
+                codeResolver,
+                ContentType.Html
         );
     }
 
@@ -50,6 +58,8 @@ public class App {
 
         return Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
+
+            config.staticFiles.add("/static");
 
             config.fileRenderer(
                     new JavalinJte(createTemplateEngine())

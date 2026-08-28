@@ -3,3 +3,15 @@
 
 # Ignore Gradle build output directory
 build
+
+# IntelliJ IDEA
+.idea/
+
+# JTE generated classes
+jte-classes/
+
+# Node dependencies
+node_modules/
+
+# Tailwind generated CSS
+src/main/resources/static/
