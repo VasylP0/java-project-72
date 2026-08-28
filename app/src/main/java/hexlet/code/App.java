@@ -2,8 +2,10 @@ package hexlet.code;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import gg.jte.TemplateEngine;
 import hexlet.code.repository.BaseRepository;
 import io.javalin.Javalin;
+import io.javalin.rendering.template.JavalinJte;
 
 import java.nio.charset.StandardCharsets;
 
@@ -20,6 +22,12 @@ public class App {
         config.setJdbcUrl(databaseUrl);
 
         return new HikariDataSource(config);
+    }
+
+    private static TemplateEngine createTemplateEngine() {
+        return JavalinJte.Companion.directoryTemplateEngine(
+                "src/main/resources/templates"
+        );
     }
 
     public static Javalin getApp() {
@@ -42,7 +50,15 @@ public class App {
 
         return Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
-            config.routes.get("/", ctx -> ctx.result("Hello World"));
+
+            config.fileRenderer(
+                    new JavalinJte(createTemplateEngine())
+            );
+
+            config.routes.get(
+                    "/",
+                    ctx -> ctx.render("index.jte")
+            );
         });
     }
 
@@ -50,6 +66,7 @@ public class App {
         var app = getApp();
 
         var port = System.getenv("PORT");
+
         if (port != null) {
             app.start(Integer.parseInt(port));
         } else {
