@@ -1,5 +1,5 @@
 package hexlet.code;
-
+import io.javalin.http.staticfiles.Location;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.ContentType;
@@ -59,7 +59,7 @@ public class App {
         return Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
 
-            config.staticFiles.add("/static");
+            config.staticFiles.add("/static", Location.CLASSPATH);
 
             config.fileRenderer(
                     new JavalinJte(createTemplateEngine())
