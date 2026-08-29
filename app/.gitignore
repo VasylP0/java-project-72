@@ -12,6 +12,3 @@ jte-classes/
 
 # Node dependencies
 node_modules/
-
-# Tailwind generated CSS
-src/main/resources/static/
