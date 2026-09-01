@@ -58,6 +58,9 @@
                 <tr>
                     <th class="border px-4 py-2">ID</th>
                     <th class="border px-4 py-2">Код ответа</th>
+                    <th class="border px-4 py-2">h1</th>
+                    <th class="border px-4 py-2">title</th>
+                    <th class="border px-4 py-2">description</th>
                     <th class="border px-4 py-2">Дата создания</th>
                 </tr>
             </thead>
@@ -68,9 +71,35 @@
                         <td class="border px-4 py-2">
                             ${check.getId()}
                         </td>
+
                         <td class="border px-4 py-2">
                             ${check.getStatusCode()}
                         </td>
+
+                        <td class="border px-4 py-2">
+                            ${check.getH1() == null
+                                ? ""
+                                : (check.getH1().length() > 200
+                                    ? check.getH1().substring(0, 200) + "..."
+                                    : check.getH1())}
+                        </td>
+
+                        <td class="border px-4 py-2">
+                            ${check.getTitle() == null
+                                ? ""
+                                : (check.getTitle().length() > 200
+                                    ? check.getTitle().substring(0, 200) + "..."
+                                    : check.getTitle())}
+                        </td>
+
+                        <td class="border px-4 py-2">
+                            ${check.getDescription() == null
+                                ? ""
+                                : (check.getDescription().length() > 200
+                                    ? check.getDescription().substring(0, 200) + "..."
+                                    : check.getDescription())}
+                        </td>
+
                         <td class="border px-4 py-2">
                             ${check.getCreatedAt().toString()}
                         </td>

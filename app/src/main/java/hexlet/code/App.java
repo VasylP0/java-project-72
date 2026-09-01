@@ -15,6 +15,7 @@ import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinJte;
 import kong.unirest.core.Unirest;
+import org.jsoup.Jsoup;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -222,10 +223,39 @@ public class App {
                         return;
                     }
 
+                    var document = Jsoup.parse(
+                            response.getBody()
+                    );
+
+                    var title = document.title();
+
+                    var h1Element =
+                            document.selectFirst("h1");
+
+                    var h1 = h1Element == null
+                            ? null
+                            : h1Element.text();
+
+                    var descriptionElement =
+                            document.selectFirst(
+                                    "meta[name=description]"
+                            );
+
+                    var description =
+                            descriptionElement == null
+                                    ? null
+                                    : descriptionElement.attr(
+                                    "content"
+                            );
+
                     var check = new UrlCheck(
                             id,
                             statusCode
                     );
+
+                    check.setTitle(title);
+                    check.setH1(h1);
+                    check.setDescription(description);
 
                     UrlCheckRepository.save(check);
 
