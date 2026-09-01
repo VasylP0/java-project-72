@@ -1,5 +1,6 @@
 plugins {
     application
+    jacoco
     id("com.gradleup.shadow") version "8.3.6"
 }
 
@@ -15,6 +16,7 @@ dependencies {
     implementation("io.javalin:javalin-rendering-jte:7.2.2")
 
     testImplementation(libs.junit.jupiter)
+    testImplementation("io.javalin:javalin-testtools:7.2.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     implementation("com.h2database:h2:2.2.224")
@@ -34,4 +36,14 @@ application {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
 }
