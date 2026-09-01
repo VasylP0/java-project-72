@@ -6,15 +6,19 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.BaseRepository;
+import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinJte;
+import kong.unirest.core.Unirest;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 public class App {
@@ -99,12 +103,29 @@ public class App {
 
             config.routes.get("/urls", ctx -> {
                 var urls = UrlRepository.getEntities();
+                var latestChecks = new HashMap<Long, UrlCheck>();
+
+                for (var url : urls) {
+                    var latestCheck =
+                            UrlCheckRepository.findLatestByUrlId(
+                                    url.getId()
+                            );
+
+                    latestCheck.ifPresent(
+                            check -> latestChecks.put(
+                                    url.getId(),
+                                    check
+                            )
+                    );
+                }
+
                 var flash = getFlash(ctx);
 
                 ctx.render(
                         "urls/index.jte",
                         Map.of(
                                 "urls", urls,
+                                "latestChecks", latestChecks,
                                 "flash", flash == null ? "" : flash
                         )
                 );
@@ -160,15 +181,67 @@ public class App {
                         .find(id)
                         .orElseThrow();
 
+                var checks =
+                        UrlCheckRepository.getByUrlId(id);
+
                 var flash = getFlash(ctx);
 
                 ctx.render(
                         "urls/show.jte",
                         Map.of(
                                 "url", url,
+                                "checks", checks,
                                 "flash", flash == null ? "" : flash
                         )
                 );
+            });
+
+            config.routes.post("/urls/{id}/checks", ctx -> {
+                var id = Long.parseLong(
+                        ctx.pathParam("id")
+                );
+
+                var url = UrlRepository
+                        .find(id)
+                        .orElseThrow();
+
+                try {
+                    var response = Unirest
+                            .get(url.getName())
+                            .asString();
+
+                    var statusCode = response.getStatus();
+
+                    if (statusCode >= 400) {
+                        ctx.sessionAttribute(
+                                "flash",
+                                "Произошла ошибка при проверке"
+                        );
+
+                        ctx.redirect("/urls/" + id);
+                        return;
+                    }
+
+                    var check = new UrlCheck(
+                            id,
+                            statusCode
+                    );
+
+                    UrlCheckRepository.save(check);
+
+                    ctx.sessionAttribute(
+                            "flash",
+                            "Страница успешно проверена"
+                    );
+
+                } catch (Exception e) {
+                    ctx.sessionAttribute(
+                            "flash",
+                            "Произошла ошибка при проверке"
+                    );
+                }
+
+                ctx.redirect("/urls/" + id);
             });
         });
     }
