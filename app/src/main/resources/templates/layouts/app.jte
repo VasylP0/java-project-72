@@ -12,8 +12,14 @@
 <body>
     <div class="container mx-auto px-4 py-6">
 
-        @if (flash != null)
-            <div class="border px-4 py-3 mb-4">
+        <header class="mb-6">
+            <a href="/" class="text-2xl font-semibold">
+                Анализатор страниц
+            </a>
+        </header>
+
+        @if (flash != null && !flash.isBlank())
+            <div role="alert" class="alert border px-4 py-3 mb-4">
                 ${flash}
             </div>
         @endif
