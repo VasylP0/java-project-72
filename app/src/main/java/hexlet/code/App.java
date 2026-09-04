@@ -146,12 +146,16 @@ public class App {
                             && !scheme.equals("https"))
                             || host == null) {
 
-                        ctx.sessionAttribute(
-                                "flash",
-                                "Некорректный URL"
+                        ctx.status(422);
+
+                        ctx.render(
+                                "index.jte",
+                                Map.of(
+                                        "flash",
+                                        "Некорректный URL"
+                                )
                         );
 
-                        ctx.redirect("/");
                         return;
                     }
 
@@ -198,12 +202,15 @@ public class App {
                     );
 
                 } catch (Exception e) {
-                    ctx.sessionAttribute(
-                            "flash",
-                            "Некорректный URL"
-                    );
+                    ctx.status(422);
 
-                    ctx.redirect("/");
+                    ctx.render(
+                            "index.jte",
+                            Map.of(
+                                    "flash",
+                                    "Некорректный URL"
+                            )
+                    );
                 }
             });
 
