@@ -135,42 +135,76 @@ public class App {
             config.routes.post("/urls", ctx -> {
                 var url = ctx.formParam("url");
 
-                var normalizedUrl = new URI(url)
-                        .resolve("/")
-                        .toString()
-                        .replaceAll("/$", "");
+                try {
+                    var uri = new URI(url);
 
-                var existingUrl =
-                        UrlRepository.findByName(normalizedUrl);
+                    var scheme = uri.getScheme();
+                    var host = uri.getHost();
 
-                if (existingUrl.isPresent()) {
+                    if (scheme == null
+                            || (!scheme.equals("http")
+                            && !scheme.equals("https"))
+                            || host == null) {
+
+                        ctx.sessionAttribute(
+                                "flash",
+                                "Некорректный URL"
+                        );
+
+                        ctx.redirect("/");
+                        return;
+                    }
+
+                    var normalizedUrl = new URI(
+                            scheme,
+                            null,
+                            host,
+                            uri.getPort(),
+                            null,
+                            null,
+                            null
+                    ).toString();
+
+                    var existingUrl =
+                            UrlRepository.findByName(normalizedUrl);
+
+                    if (existingUrl.isPresent()) {
+                        ctx.sessionAttribute(
+                                "flash",
+                                "Страница уже существует"
+                        );
+
+                        ctx.redirect(
+                                "/urls/" + existingUrl.get().getId()
+                        );
+
+                        return;
+                    }
+
+                    var newUrl = new Url(normalizedUrl);
+                    UrlRepository.save(newUrl);
+
+                    var savedUrl = UrlRepository
+                            .findByName(normalizedUrl)
+                            .orElseThrow();
+
                     ctx.sessionAttribute(
                             "flash",
-                            "Страница уже существует"
+                            "Страница успешно добавлена"
                     );
 
                     ctx.redirect(
-                            "/urls/" + existingUrl.get().getId()
+                            "/urls/" + savedUrl.getId()
                     );
 
-                    return;
+                } catch (Exception e) {
+                    ctx.sessionAttribute(
+                            "flash",
+                            "Некорректный URL"
+                    );
+
+                    ctx.redirect("/");
                 }
-
-                var newUrl = new Url(normalizedUrl);
-                UrlRepository.save(newUrl);
-
-                var savedUrl = UrlRepository
-                        .findByName(normalizedUrl)
-                        .orElseThrow();
-
-                ctx.sessionAttribute(
-                        "flash",
-                        "Страница успешно добавлена"
-                );
-
-                ctx.redirect(
-                        "/urls/" + savedUrl.getId()
-                );
             });
 
             config.routes.get("/urls/{id}", ctx -> {
