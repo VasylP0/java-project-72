@@ -17,6 +17,7 @@ dependencies {
 
     testImplementation(libs.junit.jupiter)
     testImplementation("io.javalin:javalin-testtools:7.2.2")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     implementation("com.h2database:h2:2.2.224")

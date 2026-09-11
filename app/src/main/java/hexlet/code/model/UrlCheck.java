@@ -1,6 +1,6 @@
 package hexlet.code.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class UrlCheck {
 
@@ -10,7 +10,7 @@ public class UrlCheck {
     private String h1;
     private String title;
     private String description;
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     public UrlCheck(Long urlId, Integer statusCode) {
         this.urlId = urlId;
@@ -65,11 +65,11 @@ public class UrlCheck {
         this.description = description;
     }
 
-    public Timestamp getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }

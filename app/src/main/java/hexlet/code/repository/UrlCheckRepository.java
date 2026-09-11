@@ -55,7 +55,9 @@ public class UrlCheckRepository extends BaseRepository {
                     check.setH1(resultSet.getString("h1"));
                     check.setTitle(resultSet.getString("title"));
                     check.setDescription(resultSet.getString("description"));
-                    check.setCreatedAt(resultSet.getTimestamp("created_at"));
+                    check.setCreatedAt(
+                            resultSet.getTimestamp("created_at").toLocalDateTime()
+                    );
 
                     checks.add(check);
                 }
@@ -92,7 +94,9 @@ public class UrlCheckRepository extends BaseRepository {
                     check.setH1(resultSet.getString("h1"));
                     check.setTitle(resultSet.getString("title"));
                     check.setDescription(resultSet.getString("description"));
-                    check.setCreatedAt(resultSet.getTimestamp("created_at"));
+                    check.setCreatedAt(
+                            resultSet.getTimestamp("created_at").toLocalDateTime()
+                    );
 
                     return Optional.of(check);
                 }
