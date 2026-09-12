@@ -4,7 +4,9 @@ import hexlet.code.model.UrlCheck;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class UrlCheckRepository extends BaseRepository {
@@ -104,5 +106,43 @@ public class UrlCheckRepository extends BaseRepository {
         }
 
         return Optional.empty();
+    }
+
+    public static Map<Long, UrlCheck> getLatestChecks() throws SQLException {
+        var latestChecks = new HashMap<Long, UrlCheck>();
+
+        var sql = """
+                SELECT *
+                FROM url_checks
+                WHERE id IN (
+                    SELECT MAX(id)
+                    FROM url_checks
+                    GROUP BY url_id
+                )
+                """;
+
+        try (var connection = dataSource.getConnection();
+             var statement = connection.prepareStatement(sql);
+             var resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                var check = new UrlCheck(
+                        resultSet.getLong("url_id"),
+                        resultSet.getInt("status_code")
+                );
+
+                check.setId(resultSet.getLong("id"));
+                check.setH1(resultSet.getString("h1"));
+                check.setTitle(resultSet.getString("title"));
+                check.setDescription(resultSet.getString("description"));
+                check.setCreatedAt(
+                        resultSet.getTimestamp("created_at").toLocalDateTime()
+                );
+
+                latestChecks.put(check.getUrlId(), check);
+            }
+        }
+
+        return latestChecks;
     }
 }

@@ -10,7 +10,6 @@ import kong.unirest.core.Unirest;
 import org.jsoup.Jsoup;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 
 public class UrlController {
@@ -36,15 +35,7 @@ public class UrlController {
 
     public static void index(Context ctx) throws Exception {
         var urls = UrlRepository.getEntities();
-        var latestChecks = new HashMap<Long, UrlCheck>();
-
-        for (var url : urls) {
-            var latestCheck = UrlCheckRepository.findLatestByUrlId(url.getId());
-
-            latestCheck.ifPresent(
-                    check -> latestChecks.put(url.getId(), check)
-            );
-        }
+        var latestChecks = UrlCheckRepository.getLatestChecks();
 
         var flash = getFlash(ctx);
 
