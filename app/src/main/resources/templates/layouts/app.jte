@@ -12,17 +12,17 @@
 <body>
     <div class="container mx-auto px-4 py-6">
 
-        <header class="mb-6 flex items-center justify-between">
-    <a href="/" class="text-2xl font-semibold">
-        Анализатор страниц
-    </a>
+        <header class="mb-6 flex items-center gap-8">
+            <a href="/" class="text-2xl font-semibold">
+                Анализатор страниц
+            </a>
 
-    <nav>
-        <a href="/urls" class="text-lg hover:underline">
-            Сайты
-        </a>
-    </nav>
-</header>
+            <nav>
+                <a href="/urls" class="text-lg hover:underline">
+                    Сайты
+                </a>
+            </nav>
+        </header>
 
         @if (flash != null && !flash.isBlank())
             <div role="alert" class="alert border px-4 py-3 mb-4">
