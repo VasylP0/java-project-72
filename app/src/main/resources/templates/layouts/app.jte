@@ -25,7 +25,7 @@
         </header>
 
         @if (flash != null && !flash.isBlank())
-            <div role="alert" class="alert border px-4 py-3 mb-4">
+            <div role="alert" class="border border-green-400 bg-green-100 text-green-700 px-4 py-3 mb-4 rounded">
                 ${flash}
             </div>
         @endif
