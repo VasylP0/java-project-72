@@ -1,5 +1,6 @@
 @import hexlet.code.model.Url
 @import hexlet.code.model.UrlCheck
+@import java.time.format.DateTimeFormatter
 
 @param java.util.List<Url> urls
 @param java.util.Map<Long, UrlCheck> latestChecks
@@ -35,7 +36,8 @@
 
                         <td class="border px-4 py-2">
                             @if (latestChecks.containsKey(url.getId()))
-                                ${latestChecks.get(url.getId()).getCreatedAt().toString()}
+                                ${latestChecks.get(url.getId()).getCreatedAt()
+                                    .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}
                             @endif
                         </td>
 

@@ -1,5 +1,6 @@
 @import hexlet.code.model.Url
 @import hexlet.code.model.UrlCheck
+@import java.time.format.DateTimeFormatter
 
 @param Url url
 @param java.util.List<UrlCheck> checks
@@ -33,7 +34,8 @@
                         Дата создания
                     </td>
                     <td class="border px-4 py-2">
-                        ${url.getCreatedAt().toString()}
+                        ${url.getCreatedAt()
+                            .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}
                     </td>
                 </tr>
             </tbody>
@@ -101,7 +103,8 @@
                         </td>
 
                         <td class="border px-4 py-2">
-                            ${check.getCreatedAt().toString()}
+                            ${check.getCreatedAt()
+                                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}
                         </td>
                     </tr>
                 @endfor

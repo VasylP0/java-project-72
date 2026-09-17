@@ -145,4 +145,14 @@ public class UrlCheckRepository extends BaseRepository {
 
         return latestChecks;
     }
+
+    public static void clear() throws SQLException {
+        var sql = "DELETE FROM url_checks";
+
+        try (var connection = dataSource.getConnection();
+             var statement = connection.prepareStatement(sql)) {
+
+            statement.executeUpdate();
+        }
+    }
 }

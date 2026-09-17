@@ -1,8 +1,14 @@
 @param String flash
 
 @template.layouts.app(
-    flash = flash,
     content = @`
+        @if (flash != null && !flash.isBlank())
+            <div role="alert"
+                 class="border border-red-400 bg-red-100 text-red-700 px-4 py-3 mb-4 rounded">
+                ${flash}
+            </div>
+        @endif
+
         <div class="mx-auto max-w-3xl rounded-lg border border-gray-200 bg-gray-50 p-10">
             <h1 class="text-5xl font-light">Анализатор страниц</h1>
 

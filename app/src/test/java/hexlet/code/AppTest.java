@@ -2,15 +2,24 @@ package hexlet.code;
 
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
+import io.javalin.http.HttpStatus;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AppTest {
+
+    @BeforeEach
+    void setUp() throws Exception {
+        App.getApp();
+        UrlCheckRepository.clear();
+        UrlRepository.clear();
+    }
 
     @Test
     void testMainPage() {
@@ -19,8 +28,15 @@ class AppTest {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get("/");
 
-            assertEquals(200, response.code());
-            assertTrue(response.body().string().contains("Анализатор страниц"));
+            assertEquals(
+                    HttpStatus.OK.getCode(),
+                    response.code()
+            );
+            assertTrue(
+                    response.body()
+                            .string()
+                            .contains("Анализатор страниц")
+            );
         });
     }
 
@@ -31,8 +47,15 @@ class AppTest {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get("/urls");
 
-            assertEquals(200, response.code());
-            assertTrue(response.body().string().contains("Сайты"));
+            assertEquals(
+                    HttpStatus.OK.getCode(),
+                    response.code()
+            );
+            assertTrue(
+                    response.body()
+                            .string()
+                            .contains("Сайты")
+            );
         });
     }
 
@@ -46,7 +69,10 @@ class AppTest {
                     "url=https://example.com"
             );
 
-            assertEquals(302, response.code());
+            assertEquals(
+                    HttpStatus.FOUND.getCode(),
+                    response.code()
+            );
 
             var savedUrl = UrlRepository
                     .findByName("https://example.com")
@@ -56,7 +82,10 @@ class AppTest {
                     "/urls/" + savedUrl.getId()
             );
 
-            assertEquals(200, pageResponse.code());
+            assertEquals(
+                    HttpStatus.OK.getCode(),
+                    pageResponse.code()
+            );
             assertTrue(
                     pageResponse.body()
                             .string()
@@ -84,13 +113,19 @@ class AppTest {
                     "url=https://example.com"
             );
 
-            assertEquals(302, response.code());
+            assertEquals(
+                    HttpStatus.FOUND.getCode(),
+                    response.code()
+            );
 
             var pageResponse = client.get(
                     "/urls/" + savedUrl.getId()
             );
 
-            assertEquals(200, pageResponse.code());
+            assertEquals(
+                    HttpStatus.OK.getCode(),
+                    pageResponse.code()
+            );
 
             var urls = UrlRepository.getEntities();
 
@@ -123,7 +158,10 @@ class AppTest {
                     "/urls/" + savedUrl.getId()
             );
 
-            assertEquals(200, response.code());
+            assertEquals(
+                    HttpStatus.OK.getCode(),
+                    response.code()
+            );
             assertTrue(
                     response.body()
                             .string()
@@ -137,8 +175,13 @@ class AppTest {
         try (var mockServer = new MockWebServer()) {
             mockServer.enqueue(
                     new MockResponse()
-                            .setResponseCode(200)
-                            .setHeader("Content-Type", "text/html")
+                            .setResponseCode(
+                                    HttpStatus.OK.getCode()
+                            )
+                            .setHeader(
+                                    "Content-Type",
+                                    "text/html"
+                            )
                             .setBody("""
                                     <html>
                                     <head>
@@ -169,7 +212,10 @@ class AppTest {
                         "url=" + mockUrl
                 );
 
-                assertEquals(302, createResponse.code());
+                assertEquals(
+                        HttpStatus.FOUND.getCode(),
+                        createResponse.code()
+                );
 
                 var savedUrl = UrlRepository
                         .findByName(normalizedMockUrl)
@@ -180,15 +226,27 @@ class AppTest {
                         ""
                 );
 
-                assertEquals(302, checkResponse.code());
+                assertEquals(
+                        HttpStatus.FOUND.getCode(),
+                        checkResponse.code()
+                );
 
                 var check = UrlCheckRepository
                         .findLatestByUrlId(savedUrl.getId())
                         .orElseThrow();
 
-                assertEquals(200, check.getStatusCode());
-                assertEquals("Test title", check.getTitle());
-                assertEquals("Test heading", check.getH1());
+                assertEquals(
+                        HttpStatus.OK.getCode(),
+                        check.getStatusCode()
+                );
+                assertEquals(
+                        "Test title",
+                        check.getTitle()
+                );
+                assertEquals(
+                        "Test heading",
+                        check.getH1()
+                );
                 assertEquals(
                         "Test description",
                         check.getDescription()
