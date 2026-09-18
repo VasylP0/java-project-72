@@ -2,6 +2,7 @@ package hexlet.code;
 
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
+import io.javalin.Javalin;
 import io.javalin.http.HttpStatus;
 import io.javalin.testtools.JavalinTest;
 import okhttp3.mockwebserver.MockResponse;
@@ -14,17 +15,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AppTest {
 
+    private Javalin app;
+
     @BeforeEach
     void setUp() throws Exception {
-        App.getApp();
+        app = App.getApp();
         UrlCheckRepository.clear();
         UrlRepository.clear();
     }
 
     @Test
     void testMainPage() {
-        var app = App.getApp();
-
         JavalinTest.test(app, (server, client) -> {
             var response = client.get("/");
 
@@ -42,8 +43,6 @@ class AppTest {
 
     @Test
     void testUrlsPage() {
-        var app = App.getApp();
-
         JavalinTest.test(app, (server, client) -> {
             var response = client.get("/urls");
 
@@ -61,8 +60,6 @@ class AppTest {
 
     @Test
     void testCreateUrl() {
-        var app = App.getApp();
-
         JavalinTest.test(app, (server, client) -> {
             var response = client.post(
                     "/urls",
@@ -96,8 +93,6 @@ class AppTest {
 
     @Test
     void testExistingUrl() {
-        var app = App.getApp();
-
         JavalinTest.test(app, (server, client) -> {
             client.post(
                     "/urls",
@@ -142,8 +137,6 @@ class AppTest {
 
     @Test
     void testShowUrl() {
-        var app = App.getApp();
-
         JavalinTest.test(app, (server, client) -> {
             client.post(
                     "/urls",
@@ -203,8 +196,6 @@ class AppTest {
                     0,
                     mockUrl.length() - 1
             );
-
-            var app = App.getApp();
 
             JavalinTest.test(app, (server, client) -> {
                 var createResponse = client.post(
